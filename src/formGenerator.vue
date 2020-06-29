@@ -124,6 +124,11 @@ export default {
 	methods: {
 		// Get visible prop of field
 		fieldVisible(field) {
+			if (this.model.visible &&
+				this.model.visible[field.model] !== undefined) {
+				return this.model.visible[field.model];
+			}
+			
 			if (isFunction(field.visible)) return field.visible.call(this, this.model, field, this);
 
 			if (isNil(field.visible)) return true;
