@@ -124,7 +124,7 @@ export default {
 	methods: {
 		// Get visible prop of field
 		fieldVisible(field) {
-			if (this.model.visible &&
+			if (this.model && this.model.visible &&
 				this.model.visible[field.model] !== undefined) {
 				return this.model.visible[field.model];
 			}
