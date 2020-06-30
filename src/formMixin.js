@@ -32,6 +32,11 @@ export default {
 		},
 		// Get disabled attr of field
 		fieldDisabled(field) {
+			if (this.model.disabled &&
+				this.model.disabled[field.model] !== undefined) {
+				return this.model.disabled[field.model];
+			}
+
 			if (isFunction(field.disabled)) return field.disabled.call(this, this.model, field, this);
 
 			if (isNil(field.disabled)) return false;
