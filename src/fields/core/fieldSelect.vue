@@ -23,7 +23,10 @@ export default {
 
 		items() {
 			let values = this.schema.values;
-			if (typeof values == "function") {
+			const storeGetter = this.schema.storeGetter;
+			if (storeGetter) {
+				return this.groupValues(this.$store.getters[storeGetter]);
+			} else if (typeof values == "function") {
 				return this.groupValues(values.apply(this, [this.model, this.schema]));
 			} else return this.groupValues(values);
 		}
