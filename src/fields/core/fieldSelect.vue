@@ -24,8 +24,11 @@ export default {
 		items() {
 			let values = this.schema.values;
 			const storeGetter = this.schema.storeGetter;
+			const modelGetter = this.schema.modelGetter;
 			if (storeGetter) {
 				return this.groupValues(this.$store.getters[storeGetter]);
+			} else if (modelGetter) {
+				return this.groupValues(this.model[this.schema.modelGetter]);
 			} else if (typeof values == "function") {
 				return this.groupValues(values.apply(this, [this.model, this.schema]));
 			} else return this.groupValues(values);
