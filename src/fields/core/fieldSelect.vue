@@ -1,5 +1,5 @@
 <template lang="pug">
-	select.form-control(v-model="value", :disabled="disabled", :name="schema.inputName", :id="getFieldID(schema)", :class="schema.fieldClasses", v-attributes="'input'")
+	select.form-control(v-model="value", @change="selectChanged" :disabled="disabled", :name="schema.inputName", :id="getFieldID(schema)", :class="schema.fieldClasses", v-attributes="'input'")
 		option(v-if="!selectOptions.hideNoneSelectedText", :disabled="schema.required", :value="null") {{ selectOptions.noneSelectedText || "&lt;Nothing selected&gt;" }}
 
 		template(v-for="item in items")
@@ -21,14 +21,24 @@ export default {
 			return this.schema.selectOptions || {};
 		},
 
-		items() {
-			let values = this.schema.values;
+		getterValues() {
 			const storeGetter = this.schema.storeGetter;
 			const modelGetter = this.schema.modelGetter;
 			if (storeGetter) {
-				return this.groupValues(this.$store.getters[storeGetter]);
+				const vals = typeof this.$store.getters[storeGetter] === "function" ?
+					this.$store.getters[storeGetter](this.model) :
+					this.$store.getters[storeGetter];
+				return this.groupValues(vals);
 			} else if (modelGetter) {
 				return this.groupValues(this.model[this.schema.modelGetter]);
+			}
+		},
+
+		items() {
+			let values = this.schema.values;
+			const getterValues = this.getterValues;
+			if (getterValues) {
+				return this.groupValues(getterValues);
 			} else if (typeof values == "function") {
 				return this.groupValues(values.apply(this, [this.model, this.schema]));
 			} else return this.groupValues(values);
@@ -36,6 +46,16 @@ export default {
 	},
 
 	methods: {
+		selectChanged () {
+			const getterValues = this.getterValues;
+			if (getterValues && this.schema.selectMethod) {
+				const obj = getterValues.find(item=>
+					this.getItemValue(item) === this.value);
+	
+				this.model[this.schema.selectMethod](obj);
+			}
+		},
+
 		formatValueToField(value) {
 			if (isNil(value)) {
 				return null;
