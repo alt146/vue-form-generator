@@ -125,7 +125,7 @@ export default {
 	methods: {
 		// Get visible prop of field
 		fieldVisible(field) {
-			if (!this.isOnline && this.model.onlineOnly[field.model] !== undefined && !field.onlineOnly) {
+			if (!this.isOnline && this.model.onlineOnly[field.model] !== undefined && field.onlineOnly) {
 				return false;
 			}
 
