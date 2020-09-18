@@ -15,11 +15,12 @@ div.vue-form-generator(v-if='schema != null')
 import { get as objGet, forEach, isFunction, isNil, isArray } from "lodash";
 import formMixin from "./formMixin.js";
 import formGroup from "./formGroup.vue";
+import { VueOfflineMixin } from "vue-offline";
 
 export default {
 	name: "formGenerator",
 	components: { formGroup },
-	mixins: [formMixin],
+	mixins: [formMixin, VueOfflineMixin],
 	props: {
 		schema: Object,
 
@@ -124,6 +125,10 @@ export default {
 	methods: {
 		// Get visible prop of field
 		fieldVisible(field) {
+			if (!this.isOnline && this.model.onlineOnly[field.model] !== undefined && !field.onlineOnly) {
+				return false;
+			}
+
 			if (this.model && this.model._visible &&
 				this.model._visible[field.model] !== undefined) {
 				return this.model._visible[field.model];
