@@ -26,7 +26,7 @@ export default {
 			const modelGetter = this.schema.modelGetter;
 			if (storeGetter) {
 				const vals = typeof this.$store.getters[storeGetter] === "function" ?
-					this.$store.getters[storeGetter](this.model) :
+					this.$store.getters[storeGetter](this.model, this.schema) :
 					this.$store.getters[storeGetter];
 				return this.groupValues(vals);
 			} else if (modelGetter) {

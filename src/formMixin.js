@@ -61,6 +61,11 @@ export default {
 		},
 		// Get required prop of field
 		fieldRequired(field) {
+			if (this.model && this.model._required &&
+				this.model._required[field.model] !== undefined) {
+				return this.model._required[field.model];
+			}
+			
 			if (isFunction(field.required)) return field.required.call(this, this.model, field, this);
 
 			if (isNil(field.required)) return false;
