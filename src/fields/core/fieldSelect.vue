@@ -44,14 +44,17 @@ export default {
 			} else return this.groupValues(values);
 		}
 	},
-
+	mounted () {
+		this.$nextTick(() => {
+			this.selectChanged();
+		});
+	},
 	methods: {
 		selectChanged () {
 			const getterValues = this.getterValues;
 			if (getterValues && this.schema.selectMethod) {
 				const obj = getterValues.find(item=>
-					this.getItemValue(item) === this.value);
-	
+					+this.getItemValue(item) === +this.value);
 				this.model[this.schema.selectMethod](obj);
 			}
 		},
