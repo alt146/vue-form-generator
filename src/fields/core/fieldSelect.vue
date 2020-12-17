@@ -52,10 +52,11 @@ export default {
 	methods: {
 		selectChanged () {
 			const getterValues = this.getterValues;
-			if (getterValues && this.schema.selectMethod) {
+			const method = this.schema.selectMethod;
+			if (getterValues && method && this.model[method]) {
 				const obj = getterValues.find(item=>
 					+this.getItemValue(item) === +this.value);
-				this.model[this.schema.selectMethod](obj);
+				this.model[method](obj);
 			}
 		},
 
