@@ -15,28 +15,18 @@ import abstractField from "../abstractField";
 
 export default {
 	mixins: [abstractField],
-
+	data () {
+		return {
+			getValues: null
+		};
+	},
 	computed: {
 		selectOptions() {
 			return this.schema.selectOptions || {};
 		},
-
-		getterValues() {
-			const storeGetter = this.schema.storeGetter;
-			const modelGetter = this.schema.modelGetter;
-			if (storeGetter) {
-				const vals = typeof this.$store.getters[storeGetter] === "function" ?
-					this.$store.getters[storeGetter](this.model, this.schema) :
-					this.$store.getters[storeGetter];
-				return this.groupValues(vals);
-			} else if (modelGetter) {
-				return this.groupValues(this.model[this.schema.modelGetter]);
-			}
-		},
-
 		items() {
 			let values = this.schema.values;
-			const getterValues = this.getterValues;
+			const getterValues = this.getterValues();
 			if (getterValues) {
 				return this.groupValues(getterValues);
 			} else if (typeof values == "function") {
@@ -50,8 +40,25 @@ export default {
 		});
 	},
 	methods: {
+		getterValues () {
+			if (!this.getValues || !this.getValues.length) {
+				const storeGetter = this.schema.storeGetter;
+				const modelGetter = this.schema.modelGetter;
+				if (storeGetter) {
+					const vals = typeof this.$store.getters[storeGetter] === "function" ?
+						this.$store.getters[storeGetter](this.model, this.schema) :
+						this.$store.getters[storeGetter];
+					const getValues = this.groupValues(vals);
+					this.getValues = JSON.parse(JSON.stringify(getValues));
+				} else if (modelGetter) {
+					const getValues = this.groupValues(this.model[this.schema.modelGetter]);
+					this.getValues = JSON.parse(JSON.stringify(getValues));
+				}
+			}
+			return this.getValues;
+		},
 		selectChanged () {
-			const getterValues = this.getterValues;
+			const getterValues = this.getterValues();
 			const method = this.schema.selectMethod;
 			if (getterValues && method && this.model[method]) {
 				const obj = getterValues.find(item=>
