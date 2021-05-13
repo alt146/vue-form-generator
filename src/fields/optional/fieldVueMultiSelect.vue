@@ -58,6 +58,13 @@ export default {
 
 		options() {
 			let values = this.schema.values;
+
+			const storeGetter = this.schema.storeGetter;
+			if (storeGetter) {
+				values = typeof this.$store.getters[storeGetter] === "function" ?
+					this.$store.getters[storeGetter](this.model, this.schema) :
+					this.$store.getters[storeGetter];
+			}
 			if (typeof values == "function") {
 				return values.apply(this, [this.model, this.schema]);
 			} else {
